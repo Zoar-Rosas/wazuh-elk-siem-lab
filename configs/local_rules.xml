@@ -1,0 +1,90 @@
+<!--  Local rules  -->
+<!--  Modificadas por Zoar  -->
+<!--  Copyright (C) 2015, Wazuh Inc.  -->
+
+<group name="local,syslog,sshd,windows,sysmon,">
+
+ <rule id="100001" level="5">
+ 	<if_sid>5716</if_sid>
+   	<srcip>x.x.x.x</srcip>
+	<description>sshd: authentication failed from IP x.x.x.x</description>
+	<group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+ </rule>
+
+
+ <rule id="100003" level="6">
+	<if_sid>61603</if_sid>
+	<if_group>sysmon_event</if_group>
+	<field name="win.eventdata.ParentImage">\\powershell.exe</field>
+	<description>Proceso iniciado desde PowerShell detectado por Sysmon</description>
+ </rule>
+
+ <rule id="100004" level="8">
+	<if_group>windows</if_group>
+	<field name="win.system.eventID">4625</field>
+	<description>Intento de autenticacion fallido detectado</description>
+	<group>authentication_failed</group>
+ </rule>
+
+ <rule id="100002" level="10" frequency="2" timeframe="120">
+	<if_matched_sid>100004</if_matched_sid>
+	<description>Fuerza bruta detectada: Login Windows</description>
+	<group>authentication_failed</group>
+ </rule>
+
+ <rule id="100005" level="9">
+	<if_group>windows</if_group>
+	<field name="win.system.eventId">4698</field>
+	<description>Creacion de tarea programada (Posible persistencia)</description>
+ </rule>
+
+ <rule id="100006" level="10">
+	<if_group>windows</if_group>
+	<field name="win.system.eventId">7045</field>
+	<field name="win.eventdata.serviceName">^PSEXESVC$</field>
+	<description>Uso de PsExec detectado (movimiento lateral)</description>
+ </rule>
+
+ <rule id="100007" level="7">
+ 	<if_sid>550</if_sid>
+	<if_group>syscheck</if_group>
+	<description>Cambio en archivo critico detectado</description>
+	<group>syscheck</group>
+ </rule>
+
+ <rule id="100008" level="7">
+ 	<if_sid>554</if_sid>
+	<if_group>syscheck</if_group>
+	<description>Archivo nuevo detectado por FIM (posible dropper/malware)</description>
+	<group>syscheck</group>
+ </rule>
+
+ <rule id="100009" level="8">
+	<if_group>windows</if_group>
+	<field name="win.system.eventId">4624</field>
+	<field name="win.eventdata.logonType">10</field>
+	<description>Conexion RDP exitosa detectada (logon type 10)</description>
+ </rule>
+</group>
+
+<group name="integrations">
+ <rule id="100200" level="10">
+	<field name="integration">alienvault</field>
+	<description>Alienvault OTX hit: $(alienvault.malware_name)</description>
+ </rule>
+</group>
+
+<group name="Whitelist">
+	
+ <rule id="100100" level="0">
+	<if_sid>92213</if_sid>
+	<field name="win.eventdata.image">\\\\Windows\\\\System32\\\\cleanmgr.exe</field>
+	<description>Ignorar alertas de la carpeta temporal (Falso Positivo Seguro)</description>
+ </rule>
+
+ <rule id="100101" level="0">
+	<if_sid>61102</if_sid>
+	<field name="win.eventdata.param1" type="pcre2">mscopilot_proxy\.exe</field>
+	<description>Muteo de errores repetitivos de Microsoft Copilot DCOM</description>
+ </rule>
+</group>
