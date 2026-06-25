@@ -5,7 +5,8 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker)
 
 ---
-
+![](/.assets/general.jpg)
+---
 ## Descripción
 
 Este repositorio tiene un entorno SIEM personalizado construido sobre **Wazuh + ELK Stack** desplegado con Docker Compose, orientado a la detección y respuesta de amenazas en tiempo real sobre endpoints Windows, desde un servidor Linux.
@@ -86,7 +87,7 @@ docker-compose ps   # verifica que todos los servicios estén "healthy"
 
 ```
 URL:      https://localhost
-Usuario:  admin
+Usuario:  (docker-compose.yml)
 Password: (docker-compose.yml)
 ```
 
